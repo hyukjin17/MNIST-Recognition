@@ -29,8 +29,7 @@ def plot_first_six(test_loader, save_path):
     plt.show()
 
 
-# Main function
-# Train the model and plot the losses
+# Main function (plot the image grid)
 def main(argv):
     # Only need a small batch for visualizing few example digits
     batch_size = 10

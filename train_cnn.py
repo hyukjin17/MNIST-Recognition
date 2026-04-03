@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import sys
 from cnn import CNN
 from test_cnn import load_test_data
-from config import N_EPOCHS, BATCH_SIZE_TEST, BATCH_SIZE_TRAIN, LEARNING_RATE, MOMENTUM, LOG_INTERVAL, RANDOM_SEED
+from config import N_EPOCHS, BATCH_SIZE_TEST, BATCH_SIZE_TRAIN, LEARNING_RATE, MOMENTUM, LOG_INTERVAL, RANDOM_SEED, LOSS_PLOT_PATH, MODEL_PATH, OPTIMIZER_PATH
 
 
 def load_train_data(batch_size=64):
@@ -110,9 +110,9 @@ def main(argv):
 
     # Create the results directory if it doesn't exist
     os.makedirs('./results', exist_ok=True)
-    loss_save_path = './results/training_test_loss.png'
-    model_save_path = './results/model.pth'
-    optimizer_save_path = './results/optimizer.pth'
+    loss_save_path = LOSS_PLOT_PATH
+    model_save_path = MODEL_PATH
+    optimizer_save_path = OPTIMIZER_PATH
 
     # Use deterministic cuDNN algorithm to avoid randomness
     torch.backends.cudnn.enabled = False

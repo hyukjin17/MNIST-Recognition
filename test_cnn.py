@@ -12,7 +12,7 @@ from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
 import sys
 from cnn import CNN
-from config import BATCH_SIZE_TEST
+from config import BATCH_SIZE_TEST, MODEL_PATH, TEST_DIGITS_PATH
 
 
 def load_test_data(batch_size=1000):
@@ -87,7 +87,7 @@ def evaluate_first_ten(network, test_loader):
         print("-" * 40)
 
     os.makedirs('./results', exist_ok=True)
-    save_path = './results/9_digits_prediction.png'
+    save_path = TEST_DIGITS_PATH
 
     # Plot the first 9 images in a 3x3 grid
     fig = plt.figure(num='Predictions', figsize=(8, 8))
@@ -118,7 +118,7 @@ def main(argv):
     test_loader = load_test_data(batch_size_test)
     network = CNN()
 
-    model_path = './results/model.pth'
+    model_path = MODEL_PATH
     try:
         network.load_state_dict(torch.load(model_path))
         print(f"Successfully loaded model weights from {model_path}")

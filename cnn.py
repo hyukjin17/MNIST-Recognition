@@ -1,14 +1,17 @@
-# Hyuk Jin Chung
-# 3/29/2026
-#
-# CNN model trained on the MNIST dataset to recognize handwritten digits
+"""
+Hyuk Jin Chung
+3/29/2026
+
+CNN model trained on the MNIST dataset to recognize handwritten digits
+"""
+
 
 # import statements
 import torch.nn as nn
 import torch.nn.functional as F
 
-# CNN model to be used for training
 class CNN(nn.Module):
+    """CNN model to be used for training"""
     # initialize the network
     def __init__(self):
         super(CNN, self).__init__()

@@ -1,15 +1,17 @@
-# Hyuk Jin Chung
-# 3/29/2026
-#
-# Plot the digits from the test dataset
+"""
+Hyuk Jin Chung
+3/29/2026
+
+Plot the digits from the test dataset
+"""
 
 import os
 import sys
 import matplotlib.pyplot as plt
 from test_cnn import load_test_data
 
-# Plots the first 6 examples with labels from the test dataset
 def plot_first_six(test_loader, save_path):
+    """Plots the first 6 examples with labels from the test dataset"""
     # Load only the first batch for visualization
     examples = enumerate(test_loader)
     batch_idx, (example_data, example_targets) = next(examples)
@@ -17,20 +19,20 @@ def plot_first_six(test_loader, save_path):
     fig = plt.figure(num='Test Image Grid', figsize=(8, 5))
     for i in range(6):
         plt.subplot(2, 3, i+1)
-        plt.tight_layout()
         plt.imshow(example_data[i][0], cmap='gray', interpolation='none')
         plt.title(f"Ground Truth: {example_targets[i]}")
         plt.xticks([])
         plt.yticks([])
-        
+    
+    plt.tight_layout()
     # Save the plot
-    fig.savefig(save_path, bbox_inches='tight')
+    fig.savefig(save_path)
     print(f"Image grid saved to {save_path}")
     plt.show()
 
 
-# Main function (plot the image grid)
 def main(argv):
+    """Main function (plot the image grid)"""
     # Only need a small batch for visualizing few example digits
     batch_size = 10
 

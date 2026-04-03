@@ -22,3 +22,5 @@ LOSS_PLOT_PATH = './results/training_test_loss.png'
 TEST_DIGITS_PATH = './results/9_digits_prediction.png' # image grid of predictions (first 9 digits in test set)
 HANDWRITING_DIR = './data/Handwritten'
 HANDWRITING_PREDICTIONS_PATH = './results/custom_writing_predictions.png'
+FILTER_VIS_PATH = './results/filter_visualizations.png'
+FILTERED_IMAGE_PATH = './results/filtered_images.png'

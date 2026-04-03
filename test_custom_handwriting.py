@@ -19,7 +19,7 @@ from torchvision import transforms
 from PIL import Image, ImageOps
 import matplotlib.pyplot as plt
 from cnn import CNN
-from config import MODEL_PATH, HANDWRITING_DIR, HANDWRITING_PREDICTIONS_PATH
+from config import MODEL_PATH, HANDWRITING_DIR, HANDWRITING_PREDICTIONS_PATH, DARKEN_THRESHOLD
 
 def predict_custom_digits(model_path=MODEL_PATH, image_folder=HANDWRITING_DIR):
     """
@@ -36,41 +36,56 @@ def predict_custom_digits(model_path=MODEL_PATH, image_folder=HANDWRITING_DIR):
         transforms.Normalize((0.1307,), (0.3081,))
     ])
 
-    fig = plt.figure(num='Handwritten Digits', figsize=(12, 5))
+    fig = plt.figure(num='Handwritten Digits', figsize=(12, 6))
     
     # Loop through the 10 images in the folder
     for i in range(10):
         img_path = os.path.join(image_folder, f'digit_{i}.png')
+        img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
         
-        try:
-            # Load the image as grayscale
-            img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-            # Invert colors (bitwise_not is same as 255-x)
-            img = cv2.bitwise_not(img)
-            # Save the inverted image for reference
-            save_path = os.path.join(image_folder, f'digit_{i}_inv.png')
-            cv2.imwrite(save_path, img)
-
-            # Resize the image to 28x28
-            img = cv2.resize(img, (28, 28), interpolation=cv2.INTER_AREA)
-            
-            # Normalize the values and convert 3D into 4D tensor (1, 1, 28, 28)
-            img_tensor = tensor_transform(img)
-            img_tensor = img_tensor.unsqueeze(0)
-            
-            with torch.no_grad():
-                output = network(img_tensor)
-                
-            prediction = output.argmax().item()
-            
-            plt.subplot(2, 5, i+1)
-            plt.imshow(img_tensor[0][0], cmap='gray', interpolation='none')
-            plt.title(f"Predicted: {prediction}")
-            plt.xticks([])
-            plt.yticks([])
-            
-        except FileNotFoundError:
+        # Catch any error with image access
+        if img is None:
             print(f"Could not find image: {img_path}. Make sure all 10 images  with correct naming are in the {image_folder} directory.")
+            continue
+                    
+        # Invert colors (bitwise_not = 255-x)
+        img = cv2.bitwise_not(img)
+        # Darken any pixel below threshold to 0
+        _, img = cv2.threshold(img, DARKEN_THRESHOLD, 255, cv2.THRESH_TOZERO)
+        # Save the inverted image for reference
+        save_path = os.path.join(image_folder, f'digit_{i}_inv.png')
+        cv2.imwrite(save_path, img)
+
+        # Pad the image with black pixels to make a perfect square (if the input wasn't already a square)
+        # Get height and width of image
+        h, w = img.shape
+        # Calculate how much black border to add to the shorter sides
+        max_dim = max(h, w)
+        # Make sure padding is added evenly around
+        top = (max_dim - h) // 2
+        bottom = max_dim - h - top
+        left = (max_dim - w) // 2
+        right = max_dim - w - left
+        # Apply the black border
+        img = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=0)
+
+        # Resize the image to 28x28
+        img = cv2.resize(img, (28, 28), interpolation=cv2.INTER_AREA)
+        
+        # Normalize the values and convert 3D into 4D tensor (1, 1, 28, 28)
+        img_tensor = tensor_transform(img)
+        img_tensor = img_tensor.unsqueeze(0)
+        
+        with torch.no_grad():
+            output = network(img_tensor)
+            
+        prediction = output.argmax().item()
+        
+        plt.subplot(2, 5, i+1)
+        plt.imshow(img_tensor[0][0], cmap='gray', interpolation='none')
+        plt.title(f"Predicted: {prediction}")
+        plt.xticks([])
+        plt.yticks([])
             
     plt.tight_layout()
     fig.savefig(HANDWRITING_PREDICTIONS_PATH)
@@ -80,11 +95,11 @@ if __name__ == "__main__":
     # Create the folder for custom digits if it doesn't exist
     os.makedirs(HANDWRITING_DIR, exist_ok=True)
     
-    # Check if the folder is completely empty
+    # Check if the folder is completely empty (exit program if empty)
     if len(os.listdir(HANDWRITING_DIR)) == 0:
         print(f"ERROR: The folder '{HANDWRITING_DIR}' is empty.")
         print("Please place your 10 cropped images ('digit_0.png', etc.) inside the folder and run this script again.")
-        sys.exit(1) # Instantly kills the script
+        sys.exit(1)
         
     # Run the script
     predict_custom_digits()

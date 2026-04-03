@@ -13,6 +13,7 @@ LEARNING_RATE = 0.01
 MOMENTUM = 0.5
 LOG_INTERVAL = 10
 RANDOM_SEED = 1
+DARKEN_THRESHOLD = 155
 
 # File paths
 MODEL_PATH = './results/model.pth'

@@ -12,6 +12,7 @@ from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
 import sys
 from cnn import CNN
+from config import BATCH_SIZE_TEST
 
 
 def load_test_data(batch_size=1000):
@@ -113,7 +114,7 @@ def main(argv):
     - Show outputs of first 10 predictions
     - Visualize first 9 predictions
     """
-    batch_size_test = 1000
+    batch_size_test = BATCH_SIZE_TEST
     test_loader = load_test_data(batch_size_test)
     network = CNN()
 

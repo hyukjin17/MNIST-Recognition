@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import sys
 from cnn import CNN
 from test_cnn import load_test_data
+from config import N_EPOCHS, BATCH_SIZE_TEST, BATCH_SIZE_TRAIN, LEARNING_RATE, MOMENTUM, LOG_INTERVAL, RANDOM_SEED
 
 
 def load_train_data(batch_size=64):
@@ -100,12 +101,12 @@ def main(argv):
     - Save the model weights
     """
     # Hyperparameters
-    n_epochs = 3
-    batch_size_train = 64
-    batch_size_test = 1000
-    learning_rate = 0.01
-    momentum = 0.5
-    log_interval = 10
+    n_epochs = N_EPOCHS
+    batch_size_train = BATCH_SIZE_TRAIN
+    batch_size_test = BATCH_SIZE_TEST
+    learning_rate = LEARNING_RATE
+    momentum = MOMENTUM
+    log_interval = LOG_INTERVAL
 
     # Create the results directory if it doesn't exist
     os.makedirs('./results', exist_ok=True)
@@ -115,7 +116,7 @@ def main(argv):
 
     # Use deterministic cuDNN algorithm to avoid randomness
     torch.backends.cudnn.enabled = False
-    random_seed = 1
+    random_seed = RANDOM_SEED
     torch.manual_seed(random_seed) # use same seed for consistent output
 
     train_loader = load_train_data(batch_size_train)

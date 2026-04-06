@@ -6,6 +6,7 @@ Training script for the CNN model
 """
 
 import os
+os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 import torch
 import torch.optim as optim
 import torch.nn as nn
@@ -129,7 +130,7 @@ def main(argv):
     if device.type == 'cuda':
         print(f"[Hardware] GPU: {torch.cuda.get_device_name(0)}")
 
-    network = CNN()
+    network = CNN().to(device) # push to GPU
     # Stochastic Gradient Descent optimizer
     optimizer = optim.SGD(network.parameters(), lr=learning_rate, momentum=momentum)
 

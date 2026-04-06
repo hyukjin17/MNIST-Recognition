@@ -15,7 +15,7 @@ from cnn import CNN
 from config import BATCH_SIZE_TEST, MODEL_PATH, TEST_DIGITS_PATH
 
 
-def load_test_data(batch_size=1000):
+def load_test_data(batch_size=BATCH_SIZE_TEST):
     """Downloads the MNIST dataset, preprocesses the data, and loads it into DataLoaders"""
     # Normalize pixel values centered around 0
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
@@ -30,7 +30,7 @@ def load_test_data(batch_size=1000):
     return test_loader
 
 
-def evaluate(network, test_loader):
+def evaluate(network, test_loader, device):
     """Evaluate the model on the entire test set to calculate overall accuracy"""
     network.eval()
     test_loss = 0
@@ -41,11 +41,13 @@ def evaluate(network, test_loader):
     # No gradient update for test mode
     with torch.no_grad():
         for data, target in test_loader:
+            data, target = data.to(device), target.to(device) # push data to GPU
+
             output = network(data)
             test_loss += criterion(output, target).item()
             # indices of the max output = prediction
-            pred = output.max(1)[1]
-            correct += pred.eq(target).sum()
+            pred = output.argmax(dim=1)
+            correct += pred.eq(target).sum().item()
             
     test_loss /= len(test_loader.dataset) # average loss
     
@@ -55,7 +57,7 @@ def evaluate(network, test_loader):
         100. * correct / len(test_loader.dataset)))
 
 
-def evaluate_first_ten(network, test_loader):
+def evaluate_first_ten(network, test_loader, device):
     """
     - Evaluate just the first 10 test examples and print out detailed outputs and predictions
     - Plot the first 9 digits in a 3x3 grid with predictions
@@ -65,9 +67,9 @@ def evaluate_first_ten(network, test_loader):
     # Only grab the first batch of test data
     example_data, example_targets = next(iter(test_loader))
     
-    # Grab the first 10 images and targets from the batch
-    data_top10 = example_data[:10]
-    target_top10 = example_targets[:10]
+    # Grab the first 10 images and targets from the batch and push to GPU
+    data_top10 = example_data[:10].to(device)
+    target_top10 = example_targets[:10].to(device)
     
     with torch.no_grad():
         output = network(data_top10)
@@ -95,7 +97,8 @@ def evaluate_first_ten(network, test_loader):
         pred_class = output[i].argmax().item()
         
         plt.subplot(3, 3, i+1)
-        plt.imshow(data_top10[i][0], cmap='gray', interpolation='none')
+        # Pull back data to RAM to plot images
+        plt.imshow(data_top10[i][0].cpu(), cmap='gray', interpolation='none')
         plt.title(f"Prediction: {pred_class}")
         plt.xticks([])
         plt.yticks([])
@@ -114,21 +117,26 @@ def main(argv):
     - Show outputs of first 10 predictions
     - Visualize first 9 predictions
     """
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
+    print(f"\n[Hardware] Training on: {device}")
+    if device.type == 'cuda':
+        print(f"[Hardware] GPU: {torch.cuda.get_device_name(0)}")
+    
     batch_size_test = BATCH_SIZE_TEST
     test_loader = load_test_data(batch_size_test)
-    network = CNN()
+    network = CNN().to(device)
 
     model_path = MODEL_PATH
     try:
-        network.load_state_dict(torch.load(model_path))
+        network.load_state_dict(torch.load(model_path, map_location=device))
         print(f"Successfully loaded model weights from {model_path}")
     except FileNotFoundError:
         print(f"Error: Could not find model at {model_path}. Please train the model first.")
         sys.exit(1)
     
     # Run evaluations
-    evaluate(network, test_loader)
-    evaluate_first_ten(network, test_loader)
+    evaluate(network, test_loader, device)
+    evaluate_first_ten(network, test_loader, device)
 
 if __name__ == "__main__":
     main(sys.argv)

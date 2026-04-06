@@ -13,10 +13,8 @@ Prerequisite:
 import os
 import sys
 import cv2
-import numpy as np
 import torch
 from torchvision import transforms
-from PIL import Image, ImageOps
 import matplotlib.pyplot as plt
 from cnn import CNN
 from config import MODEL_PATH, HANDWRITING_DIR, HANDWRITING_PREDICTIONS_PATH, DARKEN_THRESHOLD
@@ -45,8 +43,7 @@ def predict_custom_digits(model_path=MODEL_PATH, image_folder=HANDWRITING_DIR):
         
         # Catch any error with image access
         if img is None:
-            print(f"Could not find image: {img_path}. Make sure all 10 images  with correct naming are in the {image_folder} directory.")
-            continue
+            raise FileNotFoundError(f"Could not find image: {img_path}. Make sure all 10 images  with correct naming are in the {image_folder} directory.")
                     
         # Invert colors (bitwise_not = 255-x)
         img = cv2.bitwise_not(img)

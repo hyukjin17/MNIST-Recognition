@@ -31,12 +31,13 @@ def load_train_data(batch_size=64):
     return train_loader
 
 
-def train_network(epoch, network, optimizer, train_loader, log_interval, train_losses, train_counter):
+def train_network(epoch, network, optimizer, train_loader, log_interval, train_losses, train_counter, device):
     """Train the network and record losses"""
     network.train() # enable dropout
     criterion = nn.NLLLoss() # Negative Log Likelihood loss function
 
     for batch_idx, (data, target) in enumerate(train_loader):
+        data, target = data.to(device), target.to(device)
         optimizer.zero_grad() # reset gradients
         output = network(data)
         
@@ -54,7 +55,7 @@ def train_network(epoch, network, optimizer, train_loader, log_interval, train_l
             train_counter.append((batch_idx * len(data)) + ((epoch - 1) * len(train_loader.dataset)))
 
 
-def evaluate_test_loss(network, test_loader, test_losses):
+def evaluate_test_loss(network, test_loader, test_losses, device):
     """Evaluation on test set to monitor training status (check for overfitting)"""
     network.eval() # disable dropout
     test_loss = 0
@@ -64,6 +65,7 @@ def evaluate_test_loss(network, test_loader, test_losses):
     # No gradient update for test mode
     with torch.no_grad():
         for data, target in test_loader:
+            data, target = data.to(device), target.to(device)
             output = network(data)
             test_loss += criterion(output, target).item()
 
@@ -122,6 +124,11 @@ def main(argv):
     train_loader = load_train_data(batch_size_train)
     test_loader = load_test_data(batch_size_test)
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
+    print(f"\n[Hardware] Training on: {device}")
+    if device.type == 'cuda':
+        print(f"[Hardware] GPU: {torch.cuda.get_device_name(0)}")
+
     network = CNN()
     # Stochastic Gradient Descent optimizer
     optimizer = optim.SGD(network.parameters(), lr=learning_rate, momentum=momentum)
@@ -132,7 +139,7 @@ def main(argv):
     test_counter = [i * len(train_loader.dataset) for i in range(n_epochs + 1)]
 
     # Evaluate initial test loss before running the training
-    evaluate_test_loss(network, test_loader, test_losses)
+    evaluate_test_loss(network, test_loader, test_losses, device)
 
     # Training loop
     for epoch in range(1, n_epochs + 1):
@@ -143,10 +150,11 @@ def main(argv):
             train_loader, 
             log_interval, 
             train_losses, 
-            train_counter
+            train_counter,
+            device
         )
         # Evaluate the network at the end of the epoch
-        evaluate_test_loss(network, test_loader, test_losses)
+        evaluate_test_loss(network, test_loader, test_losses, device)
 
     # Save the model and optimizer values as a pth file
     print("Training finished! Saving model...")

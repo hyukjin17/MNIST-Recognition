@@ -17,9 +17,9 @@ DARKEN_THRESHOLD = 155
 BRIGHTEN_THRESHOLD = 255 - DARKEN_THRESHOLD
 
 # File paths
-MODEL_PATH = './results/model.pth'
-OPTIMIZER_PATH = './results/optimizer.pth'
-LOSS_PLOT_PATH = './results/training_test_loss.png'
+MODEL_PATH = './results/model_FMNIST.pth'
+OPTIMIZER_PATH = './results/optimizer_FMNIST.pth'
+LOSS_PLOT_PATH = './results/training_test_loss_FMNIST.png'
 TEST_DIGITS_PATH = './results/9_digits_prediction.png' # image grid of predictions (first 9 digits in test set)
 HANDWRITING_DIR = './data/Handwritten'
 HANDWRITING_PREDICTIONS_PATH = './results/custom_writing_predictions.png'
@@ -31,6 +31,7 @@ GREEK_LOSS_IMAGE_PATH = './results/greek_training_loss.png'
 GREEK_TEST_DIR = './data/greek_test'
 GREEK_PREDICTIONS_PATH = './results/greek_predictions.png'
 GREEK_INVERTED_DIR = './data/greek_inverted'
-TRANSFORMER_LOSS_PLOT_PATH = './results/transformer_training_test_loss.png'
-TRANSFORMER_MODEL_PATH = './results/transformer_model.pth'
-TRANSFORMER_OPTIMIZER_PATH = './results/transformer_optimizer.pth'
+TRANSFORMER_LOSS_PLOT_PATH = './results/transformer_training_test_loss_FMNIST.png'
+TRANSFORMER_MODEL_PATH = './results/transformer_model_FMNIST.pth'
+TRANSFORMER_OPTIMIZER_PATH = './results/transformer_optimizer_FMNIST.pth'
+DATA_TYPE = 'fashion_mnist'

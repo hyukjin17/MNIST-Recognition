@@ -16,17 +16,29 @@ import matplotlib.pyplot as plt
 import sys
 from cnn import CNN
 from test_cnn import load_test_data
-from config import N_EPOCHS, BATCH_SIZE_TEST, BATCH_SIZE_TRAIN, LEARNING_RATE, MOMENTUM, LOG_INTERVAL, RANDOM_SEED, LOSS_PLOT_PATH, MODEL_PATH, OPTIMIZER_PATH
+from config import N_EPOCHS, BATCH_SIZE_TEST, BATCH_SIZE_TRAIN, LEARNING_RATE, MOMENTUM, LOG_INTERVAL, RANDOM_SEED, LOSS_PLOT_PATH, MODEL_PATH, OPTIMIZER_PATH, DATA_TYPE
 
 
-def load_train_data(batch_size=64):
+def load_train_data(batch_size=64, data_type='mnist'):
     """Downloads the MNIST dataset, preprocesses the data, and loads it into DataLoaders"""
-    # Normalize pixel values centered around 0
-    transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
 
     # Download training data only
     os.makedirs('./data', exist_ok=True)
-    training_data = datasets.MNIST(root="./data/", train=True, download=True, transform=transform)
+    if data_type.lower() == 'fashion_mnist': # Download FashionMNIST data
+        # Normalize pixel values centered around 0
+        transform = transforms.Compose([
+            transforms.ToTensor(), 
+            transforms.Normalize((0.2860,), (0.3530,))
+        ])
+        training_data = datasets.FashionMNIST(root="./data/", train=True, download=True, transform=transform)
+    else: # Default to standard MNIST
+        # Normalize pixel values centered around 0
+        transform = transforms.Compose([
+            transforms.ToTensor(), 
+            transforms.Normalize((0.1307,), (0.3081,))
+        ])
+        training_data = datasets.MNIST(root="./data/", train=True, download=True, transform=transform)
+    
     # Wrap data into DataLoaders
     train_loader = torch.utils.data.DataLoader(training_data, batch_size=batch_size, shuffle=True)
     return train_loader
@@ -122,8 +134,8 @@ def main(argv):
     random_seed = RANDOM_SEED
     torch.manual_seed(random_seed) # use same seed for consistent output
 
-    train_loader = load_train_data(batch_size_train)
-    test_loader = load_test_data(batch_size_test)
+    train_loader = load_train_data(batch_size_train, DATA_TYPE)
+    test_loader = load_test_data(batch_size_test, DATA_TYPE)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
     print(f"\n[Hardware] Training on: {device}")

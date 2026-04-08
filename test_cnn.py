@@ -12,17 +12,28 @@ from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
 import sys
 from cnn import CNN
-from config import BATCH_SIZE_TEST, MODEL_PATH, TEST_DIGITS_PATH
+from config import BATCH_SIZE_TEST, MODEL_PATH, TEST_DIGITS_PATH, DATA_TYPE
 
 
-def load_test_data(batch_size=BATCH_SIZE_TEST):
+def load_test_data(batch_size=BATCH_SIZE_TEST, data_type='mnist'):
     """Downloads the MNIST dataset, preprocesses the data, and loads it into DataLoaders"""
-    # Normalize pixel values centered around 0
-    transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
 
-    # Download test data only
+    # Download training data only
     os.makedirs('./data', exist_ok=True)
-    test_data = datasets.MNIST(root="./data/", train=False, download=True, transform=transform)
+    if data_type.lower() == 'fashion_mnist': # Download FashionMNIST data
+        # Normalize pixel values centered around 0
+        transform = transforms.Compose([
+            transforms.ToTensor(), 
+            transforms.Normalize((0.2860,), (0.3530,))
+        ])
+        test_data = datasets.FashionMNIST(root="./data/", train=False, download=True, transform=transform)
+    else: # Default to standard MNIST
+        # Normalize pixel values centered around 0
+        transform = transforms.Compose([
+            transforms.ToTensor(), 
+            transforms.Normalize((0.1307,), (0.3081,))
+        ])
+        test_data = datasets.MNIST(root="./data/", train=False, download=True, transform=transform)
 
     # Wrap data into DataLoaders
     test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False)
@@ -123,7 +134,7 @@ def main(argv):
         print(f"[Hardware] GPU: {torch.cuda.get_device_name(0)}")
     
     batch_size_test = BATCH_SIZE_TEST
-    test_loader = load_test_data(batch_size_test)
+    test_loader = load_test_data(batch_size_test, DATA_TYPE)
     network = CNN().to(device)
 
     model_path = MODEL_PATH
@@ -136,7 +147,7 @@ def main(argv):
     
     # Run evaluations
     evaluate(network, test_loader, device)
-    evaluate_first_ten(network, test_loader, device)
+    # evaluate_first_ten(network, test_loader, device)
 
 if __name__ == "__main__":
     main(sys.argv)

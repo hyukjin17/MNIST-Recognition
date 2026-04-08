@@ -16,7 +16,7 @@ def main(argv):
     device = torch.device(config.device)
     print(f"\n[Hardware] Testing on: {device}")
     
-    test_loader = load_test_data(BATCH_SIZE_TEST)
+    test_loader = load_test_data(BATCH_SIZE_TEST, config.dataset)
     network = NetTransformer(config).to(device)
 
     model_path = TRANSFORMER_MODEL_PATH

@@ -12,13 +12,14 @@ import sys
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from config import DATA_TYPE
 
 
 class NetConfig:
 
     def __init__(self,
                  name = 'vit_base',
-                 dataset = 'mnist',
+                 dataset = DATA_TYPE,
                  patch_size = 4,
                  stride = 2,
                  embed_dim = 48,
@@ -33,6 +34,7 @@ class NetConfig:
                  weight_decay = 1e-4,
                  seed = 0,
                  optimizer = 'adamw',
+                 # use CUDA or MPS if available
                  device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"),
                  ):
 

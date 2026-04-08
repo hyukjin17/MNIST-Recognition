@@ -38,8 +38,8 @@ def main(argv):
     torch.backends.cudnn.enabled = False
     torch.manual_seed(config.seed) # use same seed for consistent output
 
-    train_loader = load_train_data(config.batch_size)
-    test_loader = load_test_data(batch_size_test)
+    train_loader = load_train_data(config.batch_size, config.dataset)
+    test_loader = load_test_data(batch_size_test, config.dataset)
 
     device = config.device
     print(f"\n[Hardware] Training on: {device}")

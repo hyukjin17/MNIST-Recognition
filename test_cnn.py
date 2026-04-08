@@ -12,7 +12,7 @@ from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
 import sys
 from cnn import CNN
-from config import BATCH_SIZE_TEST, MODEL_PATH, TEST_DIGITS_PATH, DATA_TYPE
+from config import BATCH_SIZE_TEST, MODEL_PATH, TEST_DIGITS_PATH, DATA_TYPE, DEVICE
 
 
 def load_test_data(batch_size=BATCH_SIZE_TEST, data_type='mnist'):
@@ -128,7 +128,7 @@ def main(argv):
     - Show outputs of first 10 predictions
     - Visualize first 9 predictions
     """
-    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
+    device = DEVICE
     print(f"\n[Hardware] Training on: {device}")
     if device.type == 'cuda':
         print(f"[Hardware] GPU: {torch.cuda.get_device_name(0)}")

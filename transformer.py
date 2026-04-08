@@ -8,11 +8,10 @@ Spring 2026
 MNIST Transformer Class Template
 """
 
-import sys
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from config import DATA_TYPE
+from config import DATA_TYPE, DEVICE
 
 
 class NetConfig:
@@ -35,7 +34,7 @@ class NetConfig:
                  seed = 0,
                  optimizer = 'adamw',
                  # use CUDA or MPS if available
-                 device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"),
+                 device = DEVICE,
                  ):
 
         # data set fixed attributes

@@ -5,16 +5,19 @@ Hyuk Jin Chung
 Configuration file for global variables and hyperparameters
 """
 
+import torch
+
 # Hyperparameters / global variables
 N_EPOCHS = 3
 BATCH_SIZE_TRAIN = 64
 BATCH_SIZE_TEST = 1000
 LEARNING_RATE = 0.01
 MOMENTUM = 0.5
-LOG_INTERVAL = 10
+LOG_INTERVAL = 200
 RANDOM_SEED = 1
 DARKEN_THRESHOLD = 155
 BRIGHTEN_THRESHOLD = 255 - DARKEN_THRESHOLD
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
 # File paths
 MODEL_PATH = './results/model_FMNIST.pth'

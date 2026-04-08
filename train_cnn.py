@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import sys
 from cnn import CNN
 from test_cnn import load_test_data
-from config import N_EPOCHS, BATCH_SIZE_TEST, BATCH_SIZE_TRAIN, LEARNING_RATE, MOMENTUM, LOG_INTERVAL, RANDOM_SEED, LOSS_PLOT_PATH, MODEL_PATH, OPTIMIZER_PATH, DATA_TYPE
+from config import N_EPOCHS, BATCH_SIZE_TEST, BATCH_SIZE_TRAIN, LEARNING_RATE, MOMENTUM, LOG_INTERVAL, RANDOM_SEED, LOSS_PLOT_PATH, MODEL_PATH, OPTIMIZER_PATH, DATA_TYPE, DEVICE
 
 
 def load_train_data(batch_size=64, data_type='mnist'):
@@ -137,7 +137,7 @@ def main(argv):
     train_loader = load_train_data(batch_size_train, DATA_TYPE)
     test_loader = load_test_data(batch_size_test, DATA_TYPE)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
+    device = DEVICE
     print(f"\n[Hardware] Training on: {device}")
     if device.type == 'cuda':
         print(f"[Hardware] GPU: {torch.cuda.get_device_name(0)}")

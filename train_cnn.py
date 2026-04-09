@@ -116,7 +116,7 @@ def main(argv):
     - Save the model weights
     """
     # Hyperparameters
-    n_epochs = N_EPOCHS
+    n_epochs = 15
     batch_size_train = BATCH_SIZE_TRAIN
     batch_size_test = BATCH_SIZE_TEST
     learning_rate = LEARNING_RATE
@@ -134,7 +134,7 @@ def main(argv):
     random_seed = RANDOM_SEED
     torch.manual_seed(random_seed) # use same seed for consistent output
 
-    train_loader = load_train_data(batch_size_train, DATA_TYPE)
+    train_loader = load_train_data(64, DATA_TYPE)
     test_loader = load_test_data(batch_size_test, DATA_TYPE)
 
     device = DEVICE
@@ -142,9 +142,16 @@ def main(argv):
     if device.type == 'cuda':
         print(f"[Hardware] GPU: {torch.cuda.get_device_name(0)}")
 
-    network = CNN().to(device) # push to GPU
+    network = CNN(
+        num_conv_layers=4,
+        filter_size=5,
+        dropout_rate=0.5,
+        num_filters_start=64,
+        dense_nodes=512,
+        pool_every_layer=False
+    ).to(device) # push to GPU
     # Stochastic Gradient Descent optimizer
-    optimizer = optim.SGD(network.parameters(), lr=learning_rate, momentum=momentum)
+    optimizer = optim.SGD(network.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
 
     train_losses = []
     train_counter = []

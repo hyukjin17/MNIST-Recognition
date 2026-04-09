@@ -8,12 +8,12 @@ Configuration file for global variables and hyperparameters
 import torch
 
 # Hyperparameters / global variables
-N_EPOCHS = 3
+N_EPOCHS = 5
 BATCH_SIZE_TRAIN = 64
 BATCH_SIZE_TEST = 1000
 LEARNING_RATE = 0.01
 MOMENTUM = 0.5
-LOG_INTERVAL = 500
+LOG_INTERVAL = 200
 RANDOM_SEED = 1
 DARKEN_THRESHOLD = 155
 BRIGHTEN_THRESHOLD = 255 - DARKEN_THRESHOLD
@@ -35,8 +35,8 @@ GREEK_TEST_DIR = './data/greek_test'
 GREEK_PREDICTIONS_PATH = './results/greek_predictions.png'
 GREEK_INVERTED_DIR = './data/greek_inverted'
 TRANSFORMER_LOSS_PLOT_PATH = './results/transformer_training_test_loss_FMNIST.png'
-TRANSFORMER_MODEL_PATH = './results/transformer_model_FMNIST.pth'
-TRANSFORMER_OPTIMIZER_PATH = './results/transformer_optimizer_FMNIST.pth'
+TRANSFORMER_MODEL_PATH = './results/transformer_model.pth'
+TRANSFORMER_OPTIMIZER_PATH = './results/transformer_optimizer.pth'
 DATA_TYPE = 'fashion_mnist'
 LINEAR_SEARCH_MODEL_PATH = './results/final_model_FMNIST.pth'
 LINEAR_SEARCH_OPTIMIZER_PATH = './results/final_optimizer_FMNIST.pth'

@@ -69,10 +69,13 @@ def run_experiment():
         network = CNN(
             num_conv_layers=exp['conv'],
             filter_size=exp['filter'],
-            dropout_rate=exp['drop']
+            dropout_rate=exp['drop'],
+            num_filters_start=64,
+            dense_nodes=512,
+            pool_every_layer=False
         ).to(device)
 
-        optimizer = optim.SGD(network.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM)
+        optimizer = optim.SGD(network.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
         train_losses = []
 
         # Training loop

@@ -21,7 +21,7 @@ from torchvision import transforms, datasets
 import matplotlib.pyplot as plt
 from cnn import CNN
 from retrain_network_greek import GreekTransform
-from config import GREEK_MODEL_PATH, GREEK_TEST_DIR, GREEK_PREDICTIONS_PATH, BRIGHTEN_THRESHOLD, GREEK_INVERTED_DIR
+from config import GREEK_MODEL_PATH, GREEK_TEST_DIR, BRIGHTEN_THRESHOLD
 
 def custom_image_loader(path):
     """Loads an image with OpenCV and applies threshold brightening and padding before PyTorch transforms are applied"""
@@ -112,7 +112,7 @@ def main(argv):
 
     test_loader = load_test_data()
     network = CNN()
-    network.fc2 = torch.nn.Linear(network.fc2.in_features, 3) # Swap last layer (3 output nodes)
+    network.classifier[2] = torch.nn.Linear(network.classifier[2].in_features, 3) # Swap last layer (3 output nodes)
     model_path = GREEK_MODEL_PATH
 
     try:

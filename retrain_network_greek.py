@@ -45,13 +45,13 @@ def train_greek_network(model_path=MODEL_PATH, greek_data_path=GREEK_TRAIN_DIR):
     for param in network.parameters():
         param.requires_grad = False
     # Swap last layer (3 output nodes)
-    network.fc2 = torch.nn.Linear(network.fc2.in_features, 3)
+    network.classifier[2] = nn.Linear(network.classifier[2].in_features, 3)
     
     print("Modified Network Architecture:")
     print(network)
 
     # Only pass the parameters of the new, unfrozen layer to the optimizer
-    optimizer = optim.SGD(network.fc2.parameters(), lr=LEARNING_RATE, momentum=MOMENTUM)
+    optimizer = optim.SGD(network.classifier[2].parameters(), lr=LEARNING_RATE, momentum=MOMENTUM)
 
     # Modify number of epochs to compare training results
     epochs = 15

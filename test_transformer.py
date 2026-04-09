@@ -1,3 +1,10 @@
+"""
+Hyuk Jin Chung
+3/29/2026
+
+Tests the transformer model on the test set of MNIST data
+"""
+
 import torch
 import sys
 from transformer import NetConfig, NetTransformer
@@ -21,7 +28,7 @@ def main(argv):
 
     model_path = TRANSFORMER_MODEL_PATH
     try:
-        # FIX 5: Use map_location to ensure the loaded weights map correctly to your current hardware
+        # Use map_location to ensure the loaded weights map correctly to GPU
         network.load_state_dict(torch.load(model_path, map_location=device))
         print(f"Successfully loaded model weights from {model_path}")
     except FileNotFoundError:

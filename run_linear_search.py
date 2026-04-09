@@ -8,6 +8,7 @@ Runs a linear search for all other variables after running the L9 experiment (lo
 - Creates the final optimized list of parameters and saves the best model
 """
 
+import gc
 import torch
 import torch.optim as optim
 from cnn import CNN
@@ -69,6 +70,14 @@ def run_single_trial(params, device, return_model=False):
     if return_model:
         return accuracy, network, optimizer
     else:
+        # Optimizer for CUDA to delete the network after every run (NVIDIA)
+        del network
+        del optimizer
+        del train_loader
+        gc.collect()
+        # Clear GPU cache
+        if device.type == 'cuda':
+            torch.cuda.empty_cache()
         return accuracy
 
 
@@ -81,10 +90,10 @@ def run_sequential_search():
     # Default parameters
     best_params = {
         # L9 best parameters
-        'num_conv_layers': 2,
-        'filter_size': 7,
-        'batch_size': 32,
-        'dropout_rate': 0.1,
+        'num_conv_layers': 4,
+        'filter_size': 5,
+        'batch_size': 64,
+        'dropout_rate': 0.5,
         
         # Defaults for the rest of the parameters before they are swept
         'num_filters_start': 10,

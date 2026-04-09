@@ -9,6 +9,7 @@ L9 orthogonal array experiment for CNN model
 - Prints out the result of each experiment to finalize the best values per variable
 """
 
+import gc
 import torch
 import torch.optim as optim
 from cnn import CNN
@@ -76,6 +77,8 @@ def run_experiment():
         ).to(device)
 
         optimizer = optim.SGD(network.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
+        # optimizer = optim.Adam(network.parameters(), lr=0.001, weight_decay=0.0001)
+        # optimizer = optim.AdamW(network.parameters(), lr=0.001, weight_decay=0.01)
         train_losses = []
 
         # Training loop
@@ -96,6 +99,15 @@ def run_experiment():
         results.append(exp)
         
         print(f"--> Run {exp['run']} Final Accuracy: {final_accuracy:.2f}%\n")
+
+        # Optimizer for CUDA to delete the network after every run (NVIDIA)
+        del network
+        del optimizer
+        del train_loader
+        gc.collect()
+        # Clear GPU cache
+        if device.type == 'cuda':
+            torch.cuda.empty_cache()
 
     # Print results table
     print("\n" + "="*50)
